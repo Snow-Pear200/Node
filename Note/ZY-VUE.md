@@ -2561,3 +2561,99 @@ meta: {
 
 ​	在 keep-alive 组件停用时调用
 
+
+
+
+
+# Vue cli  配置环境变量
+
+频繁更换ajax请求路径  http://192.168.1.6:8080 本地环境
+
+上线 http://www.workday.com/ 真实路径
+
+适用于vue-cli 3.0 及以上的版本
+
+开发项目时，经常会需要在不同环境中切换。那么我们如何配置不同的环境变量呢？ 
+
+在vue-cli 构建的项目中，默认有3种模式，如下图：
+
+<img src="images/1687318065649.png" alt="1687318065649" style="zoom:80%;" />
+
+你执行npm run serve时，对应的环境就是**开发环境**；
+
+你执行npm run build时，对应的环境就是**生产环境**。
+
+如果你开发的项目中，不止该3种，该咋整呢？像在我开发的项目中，就有本地环境(local)、开发环境(development)、测试环境(devtest)、预发布环境(beta)、生产环境(production)。
+
+## 1.创建不同环境变量文件
+
+<img src="images/1687318093061.png" alt="1687318093061" style="zoom:80%;" />
+
+如官方文档所说，通过为.env文件增加后缀来设置某个模式下特有的环境变量。我这里有5个环境，所以配置了5个.env文件。如下图：
+
+![1687318137546](images/1687318137546.png)
+
+## 2.给.env文件添加内容
+
+基本格式如下：
+
+NODE_ENV=环境名称
+
+VUE_APP_URL=对应的环境地址
+
+如我本地环境的配置就如下图所示
+
+![1687318158156](images/1687318158156.png)
+
+我本地是用的easy-mock模拟的数据，所以配置的地址是mock接口地址。
+
+## 3.在package.json中添加不同环境对应的执行语句
+
+<img src="images/1687318182136.png" alt="1687318182136" style="zoom:80%;" />
+
+ 如官方文档所说，可以通过传递 --mode 来配置不同的模式。我自己的项目配置如下图：
+
+<img src="images/1687318203701.png" alt="1687318203701" style="zoom: 80%;" />
+
+请注意我配置文件中的 **serve** 与 **build** 。
+
+## 4.使用
+
+文件已创建好，配置语句也已写好。怎么用它呢？
+
+首页你需要哪个环境，就执行哪个环境的命令语句。
+
+比如我现在需要local环境，就执行 npm run local-serve 。如下图所示：
+
+<img src="images/1687318255892.png" alt="1687318255892" style="zoom:80%;" />
+
+然后通过 process.env.NODE_ENV 获取环境名；通过 process.env.VUE_APP_URL 获取环境对应的url。
+
+
+
+比如我们在axios请求中，就可以把它的baseURL设置为 process.env.VUE_APP_URL ，如下图所示：
+
+![1687318290101](images/1687318290101.png)
+
+后面的"/web"是根据我自己接口来的，你别也写个"/web"。
+
+
+
+如果你不确定你自己现在是在哪个环境变量下，可以  console.log("当前环境变量："+process.env.NODE_ENV) 和  console.log("当前环境路径："+process.env.VUE_APP_URL) 看下。
+
+像我的项目中就是下面这2个东东：
+
+![img](images/wps1-1687318297557.jpg) 
+
+输出的内容就是.env.local文件里面配置的环境变量。
+
+为了更好的理解，我们再执行一条语句， npm run serve ,看看此时的环境变量是哪个？
+
+![img](images/wps2-1687318309825.jpg)
+
+为什么呢？
+
+因为 npm run serve 默认指向.env.developement，我在里面配置的环境就是上面输出的内容。.env.developement的配置如下图：
+
+**总而言之就是，你需要哪个环境变量，就 【npm run 对应的环境变量】**
+
